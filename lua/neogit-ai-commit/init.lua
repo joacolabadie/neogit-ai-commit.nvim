@@ -79,7 +79,7 @@ function M.generate(bufnr, opts)
 		return
 	end
 
-	vim.api.nvim_buf_set_lines(bufnr, 0, 0, false, vim.split(message, "\n"))
+	vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, vim.split(message, "\n"))
 
 	vim.notify("[neogit-ai-commit] Commit message generated!", vim.log.levels.INFO)
 end
