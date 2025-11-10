@@ -1,7 +1,7 @@
 local M = {}
 
 M.config = {
-	model = "gpt-4o-mini",
+	model = "gpt-5-mini",
 	api_key = nil,
 }
 
