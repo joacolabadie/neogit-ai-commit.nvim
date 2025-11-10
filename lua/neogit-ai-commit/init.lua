@@ -36,6 +36,11 @@ function M.generate(bufnr, opts)
 
 	local diff = git.cli.diff.cached.call().stdout
 
+	if type(diff) ~= "table" then
+		vim.notify("[neogit-ai-commit] Unexpected diff type.", vim.log.levels.ERROR)
+		return
+	end
+
 	if not diff or #diff == 0 then
 		vim.notify("[neogit-ai-commit] No staged changes found.", vim.log.levels.WARN)
 		return
@@ -74,7 +79,8 @@ function M.generate(bufnr, opts)
 		return
 	end
 
-	vim.api.nvim_buf_set_lines(bufnr, 0, -1, false, vim.split(message, "\n"))
+	vim.api.nvim_buf_set_lines(bufnr, 0, 0, false, vim.split(message, "\n"))
+
 	vim.notify("[neogit-ai-commit] Commit message generated!", vim.log.levels.INFO)
 end
 
