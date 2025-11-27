@@ -64,6 +64,7 @@ function M.generate(bufnr, opts)
 			["Authorization"] = "Bearer " .. cfg.api_key,
 		},
 		body = body,
+		timeout = 60000,
 	})
 
 	if res.status ~= 200 then
