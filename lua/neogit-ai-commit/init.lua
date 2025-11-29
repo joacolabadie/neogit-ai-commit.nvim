@@ -1,9 +1,11 @@
 local M = {}
 
 M.config = {
-	model = "gpt-5-mini",
 	api_key = nil,
 	env_var = "OPENAI_API_KEY",
+	api_url = "https://api.openai.com/v1/chat/completions",
+	model = "gpt-5-mini",
+	max_completion_tokens = nil,
 }
 
 local SYSTEM_PROMPT = [[
@@ -63,14 +65,15 @@ function M.generate(bufnr, opts)
 	vim.notify("[neogit-ai-commit] Generating commit message...", vim.log.levels.INFO)
 
 	local body = vim.fn.json_encode({
-		model = cfg.model,
 		messages = {
 			{ role = "system", content = SYSTEM_PROMPT },
 			{ role = "user", content = diff },
 		},
+		model = cfg.model,
+		max_completion_tokens = cfg.max_completion_tokens,
 	})
 
-	local res = curl.post("https://api.openai.com/v1/chat/completions", {
+	local res = curl.post(cfg.api_url, {
 		headers = {
 			["Content-Type"] = "application/json",
 			["Authorization"] = "Bearer " .. api_key,
@@ -97,14 +100,20 @@ end
 function M.setup(opts)
 	M.config = vim.tbl_deep_extend("force", M.config, opts or {})
 
+	local group = vim.api.nvim_create_augroup("NeogitAICommit", { clear = true })
+
 	vim.api.nvim_create_autocmd("FileType", {
+		group = group,
 		pattern = "gitcommit",
 		callback = function(event)
 			local bufnr = event.buf
 
-			vim.keymap.set({ "n", "i" }, "<leader>cm", function()
+			vim.keymap.set("n", "<leader>cm", function()
 				M.generate(bufnr)
-			end, { buffer = bufnr })
+			end, {
+				buffer = bufnr,
+				desc = "Generate AI commit message",
+			})
 		end,
 	})
 end
