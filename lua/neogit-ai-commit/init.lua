@@ -38,6 +38,14 @@ local function resolve_api_key(cfg)
 	return value
 end
 
+local function write_temp(text)
+	local path = vim.fn.tempname() .. ".json"
+
+	vim.fn.writefile(vim.split(text, "\n"), path)
+
+	return path
+end
+
 function M.generate(bufnr, opts)
 	local cfg = vim.tbl_deep_extend("force", M.config, opts or {})
 
@@ -50,17 +58,13 @@ function M.generate(bufnr, opts)
 		return
 	end
 
-	local diff = git.cli.diff.cached.call().stdout
-	if type(diff) ~= "table" then
+	local diff_lines = git.cli.diff.cached.call().stdout
+	if type(diff_lines) ~= "table" then
 		vim.notify("[neogit-ai-commit] Unexpected diff type.", vim.log.levels.ERROR)
 		return
 	end
-	if #diff == 0 then
-		vim.notify("[neogit-ai-commit] No staged changes found.", vim.log.levels.WARN)
-		return
-	end
 
-	diff = table.concat(diff, "\n")
+	local diff = table.concat(diff_lines, "\n")
 
 	vim.notify("[neogit-ai-commit] Generating commit message...", vim.log.levels.INFO)
 
@@ -73,14 +77,19 @@ function M.generate(bufnr, opts)
 		max_completion_tokens = cfg.max_completion_tokens,
 	})
 
+	local tmp = write_temp(body)
+
 	local res = curl.post(cfg.api_url, {
 		headers = {
 			["Content-Type"] = "application/json",
 			["Authorization"] = "Bearer " .. api_key,
 		},
-		body = body,
+		raw = { "--data-binary", "@" .. tmp },
 		timeout = 60000,
 	})
+
+	pcall(os.remove, tmp)
+
 	if res.status ~= 200 then
 		vim.notify("[neogit-ai-commit] Failed to generate commit message: " .. res.body, vim.log.levels.ERROR)
 		return
