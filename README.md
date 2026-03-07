@@ -6,20 +6,16 @@ This plugin reads the staged diff through **Neogit**, sends it to the **OpenAI C
 
 The generated message follows the **Conventional Commits** format.
 
----
-
-# Requirements
+## Requirements
 
 - Neovim
 - [nvim-lua/plenary.nvim](https://github.com/nvim-lua/plenary.nvim)
 - [NeogitOrg/neogit](https://github.com/NeogitOrg/neogit)
 - An OpenAI API key
 
----
+## Installation
 
-# Installation
-
-## lazy.nvim
+### lazy.nvim
 
 ```lua
 {
@@ -31,10 +27,9 @@ The generated message follows the **Conventional Commits** format.
   },
   opts = {},
 }
+```
 
----
-
-# Configuration
+## Configuration
 
 The plugin works out of the box with the default configuration.
 
@@ -52,7 +47,7 @@ Example:
 }
 ```
 
-## Default Configuration
+### Default Configuration
 
 ```lua
 {
@@ -64,7 +59,7 @@ Example:
 }
 ```
 
-## Options
+### Options
 
 | Option | Description |
 |------|-------------|
@@ -74,9 +69,7 @@ Example:
 | `model` | Model used to generate the commit message. |
 | `max_completion_tokens` | Optional limit for generated tokens. |
 
----
-
-# API Key Setup
+## API Key Setup
 
 The plugin expects your OpenAI API key to be available as an environment variable.
 
@@ -111,9 +104,7 @@ Alternatively you can provide the key directly in the plugin configuration:
 }
 ```
 
----
-
-# Usage
+## Usage
 
 1. Stage your changes.
 
@@ -121,13 +112,11 @@ Alternatively you can provide the key directly in the plugin configuration:
 git add .
 ```
 
-2. Open a commit message buffer (for example through **Neogit**).
+2. Open a commit message buffer through **Neogit**.
 
 3. Press the keymap below to generate a commit message.
 
----
-
-# Keymap
+## Keymap
 
 The plugin defines a buffer-local mapping for `gitcommit` buffers:
 
@@ -135,9 +124,9 @@ The plugin defines a buffer-local mapping for `gitcommit` buffers:
 <leader>cm
 ```
 
-Press this inside a commit message buffer to generate an AI commit message based on the staged changes.
+This generates a commit message based on the currently staged changes.
 
-# Notes
+## Notes
 
 - Only **staged changes** are used as input.
 - The generated message follows the **Conventional Commits** format.
