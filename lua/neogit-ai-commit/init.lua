@@ -107,10 +107,9 @@ function M.generate(bufnr, opts)
 end
 
 function M.setup(opts)
-	M.config = vim.tbl_deep_extend("force", M.config, opts or {})
+	M.config = vim.tbl_deep_extend("force", {}, M.config, opts or {})
 
 	local group = vim.api.nvim_create_augroup("NeogitAICommit", { clear = true })
-
 	vim.api.nvim_create_autocmd("FileType", {
 		group = group,
 		pattern = "gitcommit",
