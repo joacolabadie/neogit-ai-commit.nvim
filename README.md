@@ -41,7 +41,7 @@ Example:
 {
   "joacolabadie/neogit-ai-commit.nvim",
   opts = {
-    model = "gpt-5-mini",
+    model = "gpt-5",
     max_completion_tokens = 100,
   },
 }
@@ -54,7 +54,7 @@ Example:
   api_key = nil,
   env_var = "OPENAI_API_KEY",
   api_url = "https://api.openai.com/v1/chat/completions",
-  model = "gpt-5-mini",
+  model = "gpt-5",
   max_completion_tokens = nil,
 }
 ```
