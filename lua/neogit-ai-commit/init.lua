@@ -85,7 +85,7 @@ function M.generate(bufnr, opts)
 			["Authorization"] = "Bearer " .. api_key,
 		},
 		raw = { "--data-binary", "@" .. tmp },
-		timeout = 60000,
+		timeout = 180000,
 	})
 
 	pcall(os.remove, tmp)
