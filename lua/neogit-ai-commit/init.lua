@@ -15,6 +15,7 @@ Rules:
 - Format: "<type>: <summary>"
 - type must be lowercase and one of: feat, fix, refactor, chore, docs, test, build, ci, perf, style
 - summary is a clear, imperative description of what the commit does
+- the commit message must always be written in English, regardless of the codebase language
 - single line only; no body or extra lines
 - do not end with a period
 - if multiple small changes, separate them with semicolons in the same line
