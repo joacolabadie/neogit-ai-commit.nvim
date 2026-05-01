@@ -21,6 +21,7 @@ Rules:
 - if multiple small changes, separate them with semicolons in the same line
 - keep under ~72 characters when possible
 - do not include scope, emojis, issue refs, or code blocks
+- files with diffs exceeding 800 lines are excluded from the input to avoid token limits; account for their absence
 
 Input is the staged diff. Output ONLY the commit line.
 ]]
@@ -65,7 +66,42 @@ function M.generate(bufnr, opts)
 		return
 	end
 
-	local diff = table.concat(diff_lines, "\n")
+	local filtered_sections = {}
+	local skipped_files = {}
+	local current_section = {}
+	local current_file = nil
+
+	for _, line in ipairs(diff_lines) do
+		if vim.startswith(line, "diff --git ") then
+			if current_file then
+				if #current_section <= 800 then
+					vim.list_extend(filtered_sections, current_section)
+				else
+					table.insert(skipped_files, current_file)
+				end
+			end
+			current_section = { line }
+			current_file = line:match("diff %-%-git a/(.*) b/")
+		else
+			table.insert(current_section, line)
+		end
+	end
+	if current_file then
+		if #current_section <= 800 then
+			vim.list_extend(filtered_sections, current_section)
+		else
+			table.insert(skipped_files, current_file)
+		end
+	end
+
+	if #skipped_files > 0 then
+		vim.notify(
+			"[neogit-ai-commit] Skipped files with diff > 800 lines: " .. table.concat(skipped_files, ", "),
+			vim.log.levels.WARN
+		)
+	end
+
+	local diff = table.concat(filtered_sections, "\n")
 
 	vim.notify("[neogit-ai-commit] Generating commit message...", vim.log.levels.INFO)
 
